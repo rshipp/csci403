@@ -19,12 +19,7 @@ def main():
     #cursor = login()
     cursor = None
 
-    print("Commands:")
-    print("    s  -  search")
-    print("    i  -  insert")
-    print("    m  -  modify")
-    print("    d  -  delete")
-    print("    q  -  quit")
+    print_commands()
     while True:
         try:
             action = input("> ")
@@ -48,6 +43,14 @@ def main():
             except Exception:
                 pass
             exit()
+
+def print_commands():
+    print("Commands:")
+    print("    s  -  search")
+    print("    i  -  insert")
+    print("    m  -  modify")
+    print("    d  -  delete")
+    print("    q  -  quit")
 
 def login():
     login = input('login: ')
@@ -123,6 +126,8 @@ def action_search(cursor):
         course_id, section, title = row
         print(course_id, section, title)
 
+    print_commands()
+
 
 def action_modify(cursor):
 
@@ -158,8 +163,6 @@ def action_modify(cursor):
     except pg8000.Error as e:
         print('Database error: ', e.args[2])
 
-    cursor.close()
-    db.close()
 
 if __name__ == "__main__":
     main()
