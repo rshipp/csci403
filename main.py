@@ -16,11 +16,10 @@ import getpass
 import pg8000
 
 def main():
-    #cursor = login()
-    cursor = None
+    cursor = login()
 
-    print_commands()
     while True:
+        print_commands()
         try:
             action = input("> ")
             if action == 's':
@@ -86,17 +85,32 @@ def action_search(cursor):
         search_type = input("search type> ")
 
     if search_type == 'a':
-        sql = """SELECT course_id, section, title
-                 FROM mines_courses
-                 WHERE instructor = 'Painter-Wakefield, Christopher'"""
+        sql = """SELECT album.id, album.title, album.year, artist.name
+                 FROM album, artist
+                 WHERE lower(artist.name) like lower(%s) and
+                       artist.id = album.artist_id
+                 GROUP BY album.id, album.title, album.year, artist.name
+                 ORDER BY album.id"""
     elif search_type == 'g':
-        sql = """SELECT course_id, section, title
-                 FROM mines_courses
-                 WHERE instructor = 'Painter-Wakefield, Christopher'"""
+        sql = """SELECT album.id, album.title, album.year, artist.name
+                 FROM album, genre, album_genre, artist
+                 WHERE lower(genre.genre) like lower(%s) and
+                       album_genre.album_id = album.id and
+                       album_genre.genre = genre.genre and
+                       album.artist_id = artist.id
+                 GROUP BY album.id, album.title, album.year, artist.name
+                 ORDER BY album.id"""
     elif search_type == 'k':
-        sql = """SELECT course_id, section, title
-                 FROM mines_courses
-                 WHERE instructor = 'Painter-Wakefield, Christopher'"""
+        sql = """SELECT album.id, album.title, album.year, artist.name
+                 FROM album, genre, album_genre, artist
+                 WHERE (lower(genre.genre) like lower(%s) or
+                        lower(album.title) like lower(%s) or
+                        lower(artist.name) like lower(%s)) and
+                       (album_genre.album_id = album.id and
+                        album_genre.genre = genre.genre and
+                        album.artist_id = artist.id)
+                 GROUP BY album.id, album.title, album.year, artist.name
+                 ORDER BY album.id"""
 
     print("Search for?")
     query = input("search term> ")
@@ -105,29 +119,16 @@ def action_search(cursor):
         query = input("search term> ")
 
     # immediate SELECT
-    cursor.execute(sql)
+    if search_type == 'k':
+        cursor.execute(sql, ('%%' + query + '%%','%%' + query + '%%','%%' + query + '%%',))
+    else:
+        cursor.execute(sql, ('%%' + query + '%%',))
 
     results = cursor.fetchall()
     for row in results:
-        course_id, section, title = row
-        print(course_id, section, title)
+        album_id, title, year, artist = row
+        print(album_id, '-', title, '(' + str(year) + ')', 'by', artist)
     print()
-
-    # prepared SELECT
-    faculty = input('Enter faculty as lastname, firstname: ')
-    query = """SELECT course_id, section, title
-               FROM mines_courses
-               WHERE instructor LIKE %s"""
-
-    cursor.execute(query, ('%%' + faculty + '%%',))
-
-    results = cursor.fetchall()
-    for row in results:
-        course_id, section, title = row
-        print(course_id, section, title)
-
-    print_commands()
-
 
 def action_modify(cursor):
 
