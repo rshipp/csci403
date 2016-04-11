@@ -71,14 +71,38 @@ def login():
     cursor = db.cursor()
     return cursor
 
-def action_select(cursor):
+def action_search(cursor):
+
+    print("Search by:")
+    print("    a  -  artist")
+    print("    g  -  genre")
+    print("    k  -  keyword")
+    search_type = input("search type> ")
+    while search_type not in ['a', 'g', 'k']:
+        print("No such type: " + search_type)
+        search_type = input("search type> ")
+
+    if search_type == 'a':
+        sql = """SELECT course_id, section, title
+                 FROM mines_courses
+                 WHERE instructor = 'Painter-Wakefield, Christopher'"""
+    elif search_type == 'g':
+        sql = """SELECT course_id, section, title
+                 FROM mines_courses
+                 WHERE instructor = 'Painter-Wakefield, Christopher'"""
+    elif search_type == 'k':
+        sql = """SELECT course_id, section, title
+                 FROM mines_courses
+                 WHERE instructor = 'Painter-Wakefield, Christopher'"""
+
+    print("Search for?")
+    query = input("search term> ")
+    while not query:
+        print("Can't be empty")
+        query = input("search term> ")
 
     # immediate SELECT
-    cursor.execute(
-       """SELECT course_id, section, title
-          FROM mines_courses
-          WHERE instructor = 'Painter-Wakefield, Christopher'"""
-    )
+    cursor.execute(sql)
 
     results = cursor.fetchall()
     for row in results:
@@ -99,6 +123,9 @@ def action_select(cursor):
         course_id, section, title = row
         print(course_id, section, title)
 
+
+def action_modify(cursor):
+
     # DDL code
     query = "CREATE TABLE foo (x text PRIMARY KEY)"
     try:
@@ -106,9 +133,6 @@ def action_select(cursor):
     except pg8000.Error as e:
         print('Database error: ', e.args[2])
         db.rollback() # necessary after error, unless autocommitting
-
-
-def action_modify(cursor):
 
     # modification queries with exception handling
     query = "INSERT INTO foo VALUES (%s)"
