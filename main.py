@@ -130,6 +130,26 @@ def action_search(cursor):
         print(album_id, '-', title, '(' + str(year) + ')', 'by', artist)
     print()
 
+def action_delete(cursor):
+
+    album_id = input("album id> ")
+    while True:
+        try:
+            album_id = int(album_id)
+            break
+        except ValueError:
+            print("Not a number: " + album_id)
+
+    try:
+        cursor.execute("""DELETE FROM album_genre
+                WHERE album_genre.album_id = %s""", (album_id,))
+        cursor.execute("""DELETE FROM album
+                WHERE album.id = %s""", (album_id,))
+        print("Done!")
+    except pg8000.Error as e:
+        print('Database error: ', e.args[2])
+        db.rollback()
+
 def action_modify(cursor):
 
     # DDL code
