@@ -15,7 +15,27 @@
 import getpass
 import pg8000
 
-if __name__ == "__main__":
+def main():
+    #cursor = login()
+    cursor = None
+
+    print("Commands:")
+    print("    s  -  search")
+    print("    i  -  insert")
+    print("    m  -  modify")
+    print("    d  -  delete")
+    while True:
+        try:
+            action = input("> ")
+        except EOFError:
+            try:
+                cursor.close()
+                db.close()
+            except Exception:
+                pass
+            exit()
+
+def login():
     login = input('login: ')
     secret = getpass.getpass('password: ')
 
@@ -35,6 +55,9 @@ if __name__ == "__main__":
     #db.autocommit = True
 
     cursor = db.cursor()
+    return cursor
+
+def action_select(cursor):
 
     # immediate SELECT
     cursor.execute(
@@ -70,6 +93,9 @@ if __name__ == "__main__":
         print('Database error: ', e.args[2])
         db.rollback() # necessary after error, unless autocommitting
 
+
+def action_modify(cursor):
+
     # modification queries with exception handling
     query = "INSERT INTO foo VALUES (%s)"
     try:
@@ -96,3 +122,6 @@ if __name__ == "__main__":
 
     cursor.close()
     db.close()
+
+if __name__ == "__main__":
+    main()
