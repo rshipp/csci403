@@ -118,7 +118,7 @@ def action_search(cursor):
         print("Can't be empty")
         query = input("search term> ")
 
-    # immediate SELECT
+    # SELECT
     if search_type == 'k':
         cursor.execute(sql, ('%%' + query + '%%','%%' + query + '%%','%%' + query + '%%',))
     else:
