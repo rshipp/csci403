@@ -152,6 +152,9 @@ def action_delete(cursor):
 
 def action_modify(cursor):
 
+
+def example():
+
     # DDL code
     query = "CREATE TABLE foo (x text PRIMARY KEY)"
     try:
