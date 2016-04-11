@@ -152,6 +152,41 @@ def action_delete(cursor):
 
 def action_modify(cursor):
 
+    album_id = input("album id> ")
+    while True:
+        try:
+            album_id = int(album_id)
+            break
+        except ValueError:
+            print("Not a number: " + album_id)
+
+    # Title
+    album_title = input("new album title> ")
+    while not album_title:
+        print("Can't be empty")
+        album_title = input("new album title> ")
+    # Artist
+    artist_name = input("new artist name> ")
+    while not artist_name:
+        print("Can't be empty")
+        artist_name = input("new artist name> ")
+    # Year
+    album_year = input("new album year> ")
+    while not album_year:
+        print("Can't be empty")
+        album_year = input("new album year> ")
+    # Genres
+
+
+    try:
+        cursor.execute("""DELETE FROM album_genre
+                WHERE album_genre.album_id = %s""", (album_id,))
+        cursor.execute("""DELETE FROM album
+                WHERE album.id = %s""", (album_id,))
+        print("Done!")
+    except pg8000.Error as e:
+        print('Database error: ', e.args[2])
+        db.rollback()
 
 def example():
 
