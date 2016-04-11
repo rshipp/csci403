@@ -24,9 +24,23 @@ def main():
     print("    i  -  insert")
     print("    m  -  modify")
     print("    d  -  delete")
+    print("    q  -  quit")
     while True:
         try:
             action = input("> ")
+            if action == 's':
+                action_search(cursor)
+            elif action == 'i':
+                action_insert(cursor)
+            elif action == 'm':
+                action_modify(cursor)
+            elif action == 'd':
+                action_delete(cursor)
+            elif action == 'q':
+                raise EOFError
+            else:
+                print("No such command: " + action)
+
         except EOFError:
             try:
                 cursor.close()
