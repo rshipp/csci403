@@ -224,40 +224,5 @@ def action_modify(cursor, db):
         print("Try again?")
         db.rollback()
 
-def example():
-
-    # DDL code
-    query = "CREATE TABLE foo (x text PRIMARY KEY)"
-    try:
-        cursor.execute(query)
-    except pg8000.Error as e:
-        print('Database error: ', e.args[2])
-        db.rollback() # necessary after error, unless autocommitting
-
-    # modification queries with exception handling
-    query = "INSERT INTO foo VALUES (%s)"
-    try:
-        cursor.execute(query, ('testing 1 2 3',))
-        db.commit()
-    except pg8000.Error as e:
-        print('Database error: ', e.args[2])
-        db.rollback() # necessary after error, unless autocommitting
-
-    # second time should cause an integrity constraint violation
-    try:
-        cursor.execute(query, ('testing 1 2 3',))
-        db.commit()
-    except pg8000.Error as e:
-        print('Database error: ', e.args[2])
-        db.rollback() # necessary after error, unless autocommitting
-
-    # bad SELECT query with exception handling
-    query = "SELECT FROM foo WHERE blah = arg"
-    try:
-        cursor.execute(query)
-    except pg8000.Error as e:
-        print('Database error: ', e.args[2])
-
-
 if __name__ == "__main__":
     main()
