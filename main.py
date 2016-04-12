@@ -151,27 +151,7 @@ def action_delete(cursor, db):
         print('Database error: ', e.args[2])
         db.rollback()
 
-def action_modify(cursor, db):
-
-    album_id = input("album id> ")
-    while True:
-        try:
-            album_id = int(album_id)
-            break
-        except ValueError:
-            print("Not a number: " + album_id)
-
-
-    try:
-        cursor.execute("""SELECT album.id, album.title, album.year, artist.name
-                     FROM album, artist
-                     WHERE album.id = %s and
-                           album.artist_id = artist.id""", (album_id,))
-        results = cursor.fetchone()
-        album_id, title, year, artist = results
-        print(album_id, '-', title, '(' + str(year) + ')', 'by', artist)
-    except pg8000.Error as e:
-        print('Database error: ', e.args[2])
+def get_album_information(cursor, db):
 
     # Title
     album_title = input("new album title> ")
@@ -204,6 +184,32 @@ def action_modify(cursor, db):
         genre_list = input("new genre list> ")
     genres = [g.strip() for g in genre_list.split(',')]
 
+    return album_title, artist_id, album_year, genres
+
+def action_modify(cursor, db):
+
+    album_id = input("album id> ")
+    while True:
+        try:
+            album_id = int(album_id)
+            break
+        except ValueError:
+            print("Not a number: " + album_id)
+
+
+    try:
+        cursor.execute("""SELECT album.id, album.title, album.year, artist.name
+                     FROM album, artist
+                     WHERE album.id = %s and
+                           album.artist_id = artist.id""", (album_id,))
+        results = cursor.fetchone()
+        album_id, title, year, artist = results
+        print(album_id, '-', title, '(' + str(year) + ')', 'by', artist)
+    except pg8000.Error as e:
+        print('Database error: ', e.args[2])
+
+    album_title, artist_id, album_year, genres = get_album_information(cursor, db)
+
     try:
         cursor.execute("""UPDATE album
                 SET title = %s,
@@ -212,6 +218,31 @@ def action_modify(cursor, db):
                 WHERE id = %s""", (album_title, artist_id, album_year, album_id,))
         cursor.execute("""DELETE FROM album_genre
                 WHERE album_id = %s""", (album_id,))
+        for genre in genres:
+            cursor.execute("""INSERT INTO album_genre
+                    (album_id, genre)
+                    VALUES (%s, %s)""", (album_id, genre,))
+        db.commit()
+        print("Done!")
+    except pg8000.Error as e:
+        print('Database error: ', e.args[2])
+        print("Probably a bad genre list")
+        print("Try again?")
+        db.rollback()
+
+def action_insert(cursor, db):
+
+    album_title, artist_id, album_year, genres = get_album_information(cursor, db)
+
+    try:
+        cursor.execute("""INSERT INTO album
+                (title, artist_id, year)
+                VALUES (%s, %s, %s)""", (album_title, artist_id, album_year,))
+        cursor.execute("""SELECT id
+                     FROM album
+                     WHERE title = %s""", (album_title,))
+        results = cursor.fetchone()[0]
+        album_id = results
         for genre in genres:
             cursor.execute("""INSERT INTO album_genre
                     (album_id, genre)
