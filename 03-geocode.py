@@ -1,5 +1,11 @@
 #!/usr/bin/env python
-"""Convert intersections to coordinates"""
+"""Convert intersections to coordinates
+
+Requires a Google API key (in quotes) in google_secret.json.
+Get a key from
+https://console.developers.google.com/flows/enableapi?apiid=geocoding_backend&keyType=SERVER_SIDE&reusekey=true
+"""
+
 import json
 
 import requests
