@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 STRICT//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:define-macro="layout">
+<head>
+    <title>CSCI403 Viz</title>
+    <link rel="stylesheet"
+          href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="${request.static_url('dbui:static/iThing.css')}"/>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
+    <script type="text/javascript"
+          src="${request.static_url('dbui:static/jquery-1.9.1.js')}"></script>
+    <script type="text/javascript"
+          src="${request.static_url('dbui:static/bootstrap.min.js')}"></script>
+</head>
+<body>
+<div id="main">
+    <div metal:define-slot="content">
+    </div>
+    <div class="row">
+        <br><br><br>
+    </div>
+</div>
+</body>
+</html>

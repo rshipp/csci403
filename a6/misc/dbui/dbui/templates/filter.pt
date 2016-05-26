@@ -1,0 +1,53 @@
+<div metal:use-macro="view.layout">
+    <div metal:fill-slot="content">
+            <!-- Map placeholder -->
+            <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+            <script type="text/javascript" src="https://raw.githubusercontent.com/Leaflet/Leaflet.heat/gh-pages/dist/leaflet-heat.js"></script>
+            <script src="${request.static_url('dbui:static/addresspoints.js')}"></script>
+            <div id="map" style='height:99%;width:99%'></div>
+            <script>
+            var map = L.map('map').setView([40.7, -74.0], 11);
+            L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                subdomains: ['1', '2', '3', '4'],
+                attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a>. Map data (c) <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> contributors, CC-BY-SA.'
+            }).addTo(map);
+            addressPoints = addressPoints.map(function (p) { return [p[0], p[1]]; });
+            var heat = L.heatLayer(
+                addressPoints
+            , {radius: 50}).addTo(map);
+            //map.fitBounds(heat.getBounds());
+
+            /*var lastLayer = null;
+            $("#update_map").click(function(){
+                if (lastLayer != null) {
+                    map.removeLayer(lastLayer);
+                }
+                try {
+                    var polygon = [{
+                        "type": "Feature",
+                        "properties": {
+                            "name": "Region",
+                            "show_on_map": true
+                        },
+                        "geometry": $.parseJSON($("#geojson").val()),
+                        },
+                    ];
+                } catch (e) {
+                    if (e instanceof SyntaxError) {
+                        alert("Error in GeoJSON input: "+e.message);
+                    } else {
+                        throw e;
+                    }
+                }
+                lastLayer = L.geoJson(polygon, {
+                    filter: function(feature, layer) {
+                        return feature.properties.show_on_map;
+                    }
+                }).addTo(map);
+                map.fitBounds(lastLayer.getBounds());
+            });*/
+            </script>
+
+    </div>
+</div>
